@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: app:v1
+        image: 827927/regapp:v2
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c", "python3 manage.py makemigrations; python3 manage.py migrate; python3 manage.py runserver 0.0.0.0:8080"]
         ports:
