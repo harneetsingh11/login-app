@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  web:
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    container_name: webapp 
+    ports:
+      - "8080:8080"  
+    depends_on:
+      - db
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8080"
+    networks:
+      - my_bridge_network  # Assign the web service to the bridge network
+
+  db:
+    image: postgres
+    container_name: db
+    ports:
+      - "5432:5432" 
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Harneet@500cr
+    volumes:
+      - ./db-data:/var/lib/postgresql/data  
+    networks:
+      - my_bridge_network  # Assign the db service to the bridge network
+
+networks:
+  my_bridge_network:  # Define a bridge network
+    driver: bridge  # Specify the bridge driver
