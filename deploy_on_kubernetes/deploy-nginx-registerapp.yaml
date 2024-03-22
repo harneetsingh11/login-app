@@ -4,26 +4,33 @@ metadata:
   name: nginx-config
 data:
   nginx.conf: |
-    server {
-    listen       80;
-    server_name  localhost nginx-service;
-
-    location / {
-        rewrite ^/$ /app/login/ permanent;
+    events {
+      worker_connections  1024;
     }
+    http {
+      include /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+      server {
+        listen       80;
+        server_name  localhost nginx-service;
 
-    location / {
-        proxy_pass http://webapp-service:8080/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
+        location = / {
+          rewrite ^/$ /app/login/ permanent;
+        }
 
-    location /code/ {
-        alias /webapp-code/;
+        location / {
+          proxy_pass http://webapp-service:8080/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /code/ {
+          alias /webapp-code/;
+        }
+      }
     }
-    } 
 
 ---
 
@@ -33,12 +40,12 @@ metadata:
   name: nginx-pv
 spec:
   capacity:
-    storage: 1Gi
+    storage: 4Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: ../registerapp   
+    path: /home/ec2-user/sub-branch/login-app/registerapp
 
 ---
 
@@ -52,6 +59,7 @@ spec:
   resources:
     requests:
       storage: 4Gi
+  volumeName: nginx-pv
 
 ---
 
@@ -72,7 +80,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: nginx
         ports:
         - containerPort: 80
         volumeMounts:
@@ -80,8 +88,7 @@ spec:
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
         - name: nginx-pvc-1
-          mountPath: 
-          subPath: /webapp-code
+          mountPath: /webapp-code
       volumes:
       - name: nginx-config-volume
         configMap:

@@ -28,6 +28,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['13.201.187.130', 'localhost']
 
 
+CSRF_TRUSTED_ORIGINS = [
+        'http://nginx-service',
+        'http://localhost',
+        'http://13.201.187.130:32213'
+]
+
 # Application definition
 
 INSTALLED_APPS = [
