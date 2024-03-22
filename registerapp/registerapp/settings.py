@@ -27,13 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['13.201.187.130', 'localhost']
 
-
-CSRF_TRUSTED_ORIGINS = [
-        'http://nginx-service',
-        'http://localhost',
-        'http://13.201.187.130'
-]
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,7 +43,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
